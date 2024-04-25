@@ -5,3 +5,117 @@ date: "2024-04-24"
 output: html_document
 ---
 
+## Starting Steps: Reading in DNA Code and Preliminary Data
+
+### Load in Necessary Packages
+```{r}
+InstallPackages = FALSE
+if (InstallPackages) {
+    if (!requireNamespace("BiocManager", quietly=TRUE)) 
+        install.packages("BiocManager")
+    BiocManager::install("msa")
+    install.packages("adegenet")
+    install.packages("ape")
+    install.packages("ggtree")
+    install.packages("ggplot2")
+    install.packages("ips")
+    install.packages("bios2mds")
+    install.packages("haplotypes")
+    install.packages("pegas")
+    install.packages("phytools")
+    install.packages("stats")
+    install.packages("treeio") }
+```
+
+```{r}
+library(adegenet)
+library(ape)
+library(ggtree)
+library(ggplot2)
+library(stats)
+library(ips)
+library(msa)
+library (spider)
+```
+### Read in DNA Code
+```{r}
+Rhea_dna <- read.dna("https://raw.githubusercontent.com/allyboville3/Collaborative-Data-Science-Project/main/Aves%20FASTA%20Files/Rhea_americana.fasta", format = "fasta")
+
+# This creates a specific structure called a DNAbin in {ape}. We can see this by checking the class.
+
+class (Rhea_dna)
+```
+
+### Preliminary data/looking
+
+Use {pegas} to gather some other information:
+This calculates the frequency of the four nucleotides in the FASTA file
+```{r}
+base.freq(Rhea_dna)
+```
+
+This calculates the GC content, which is useful in ancient DNA. 
+```{r}
+GC.content(Rhea_dna)
+```
+
+## Trimming and Preparing Data
+
+```{r}
+MySeq <- readDNAStringSet("https://raw.githubusercontent.com/allyboville3/Collaborative-Data-Science-Project/main/Aves_cytB.fas")
+```
+
+Using the `msa()` function in the {msa} package aligns all samples to the same length by the ClustalW algorithm and stores them as a DNAStringSet object.
+```{r}
+msa(MySeq)
+```
+Let's look at it!
+```{r}
+print(MySeq)
+```
+
+Using the `as.DNAbin()` function from {ape} allows us to store these multiple alignments as a DNAbin object. We need a DNAbin object going forward to use many functions, including those from {ape}
+```{r}
+SeqBin <- as.DNAbin(MySeq)
+```
+
+Trim ends?
+```{r}
+SeqBin <- trimEnds(as.matrix(SeqBin))
+```
+
+
+## Phylogenetics
+
+```{r}
+an<-as.alignment(SeqBin)  #converting DNAbin to alignment format
+nm<-as.matrix(an)       #converting alignment to matrix
+
+#remove partial genome C.bennetti from matrix because is not the same length (in # of bp) as other sequences
+
+nbinmat<-as.matrix(labels(SeqBin)) #extraction of the sample names
+SeqBin
+class(SeqBin)
+dnbin<-dist.dna(SeqBin, model = "K80") #computing distance by ape package with K80 model derived by Kimura (1980)
+tree<-nj(dnbin)
+```
+
+Plot a phylogenetic tree using the `msaplot()` command from {ggtree} along with various aesthetics from {ggplot2}
+```{r}
+ggt <- ggtree(tree, cex = 0.8, aes(color = branch.length)) +
+
+scale_color_continuous(high = "lightskyblue1",low = "coral4") +
+
+geom_tiplab(align = TRUE, size = 2) +
+
+geom_treescale(y = -5, color = "coral4", fontsize = 4)
+
+msaplot(ggt, SeqBin, offset = 0.009, width = 1, height = 0.5,
+
+color = c(rep("rosybrown", 1), rep("sienna1", 1),
+
+rep("lightgoldenrod1", 1), rep("lightskyblue1", 1), rep("green", 1)))
+```
+
+
+## Haplotypes

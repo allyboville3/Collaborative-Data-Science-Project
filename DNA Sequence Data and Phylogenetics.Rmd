@@ -116,6 +116,13 @@ color = c(rep("rosybrown", 1), rep("sienna1", 1),
 
 rep("lightgoldenrod1", 1), rep("lightskyblue1", 1), rep("green", 1)))
 ```
+There are other ways to represent trees that show different things:
 
 
-## Haplotypes
+## More analysis
+Calculating Genetic Distance demonstrates that our assumption that the unknown is most closely related to *Dinornis giganteus* is correct. 
+```{r}
+dist.gene((as.matrix(SeqBin)), method = "pairwise", pairwise.deletion = FALSE,
+          variance = FALSE)
+```
+Monophylitic 

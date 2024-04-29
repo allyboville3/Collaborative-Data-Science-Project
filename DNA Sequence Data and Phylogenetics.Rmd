@@ -16,8 +16,8 @@ if (InstallPackages) {
     BiocManager::install("msa")
     install.packages("adegenet")
     install.packages("ape")
-    install.packages("Biostrings")
-    install.packages("ggtree")
+    BiocManager::install("Biostrings")
+    BiocManager::install("ggtree")
     install.packages("ggplot2")
     install.packages("ips")
     install.packages("bios2mds")
@@ -102,18 +102,21 @@ tree<-nj(dnbin)
 Plot a phylogenetic tree using the `msaplot()` command from {ggtree} along with various aesthetics from {ggplot2}
 ```{r}
 ggt <- ggtree(tree, cex = 0.8, aes(color = branch.length)) +
+  scale_color_continuous(high = "coral",low = "black") +
+  geom_tiplab(align = TRUE, size = 7) +
+  theme(legend.position = "right") +
+  geom_treescale(y = -5, color = "coral4", fontsize = 4)
+  msaplot(ggt, SeqBin, offset = 0.15, width = 1, height = 0.5)
+  
+  
+    #color = c(rep("rosybrown", 1), rep("sienna1", 1),
+    #rep("lightgoldenrod1", 1), rep("lightskyblue1", 1), rep("green", 1))
+    )
+  
 
-scale_color_continuous(high = "lightskyblue1",low = "coral4") +
+ggtree(tree, aes(color = branch.length)) + geom_tiplab(size = 7) + layout_inward_circular()
 
-geom_tiplab(align = TRUE, size = 2) +
 
-geom_treescale(y = -5, color = "coral4", fontsize = 4)
-
-msaplot(ggt, SeqBin, offset = 0.009, width = 1, height = 0.5,
-
-color = c(rep("rosybrown", 1), rep("sienna1", 1),
-
-rep("lightgoldenrod1", 1), rep("lightskyblue1", 1), rep("green", 1)))
 ```
 There are other ways to represent trees that show different things:
 
@@ -125,7 +128,47 @@ Calculating Genetic Distance demonstrates that our assumption that the unknown i
 dist.gene((as.matrix(SeqBin)), method = "pairwise", pairwise.deletion = FALSE,
           variance = FALSE)
 ```
-Monophylitic 
+Monophyletic
+
+```{r}
+is.monophyletic(tree, c("Dinornis giganteus", "Unknown Species"))
+is.monophyletic(tree, c("Dinornis giganteus", "Struthio camelus"))
+
+```
+
+
+## Tree Rooting
+
+```{r}
+# plot tree
+plot.phylo(tree, main="Aves (Palaeognathae) Phylogenetic Tree", 
+            type = "unrooted", 
+            use.edge.length = F)
+
+# add label
+mtext(text = "Unrooted Tree - No branch Lengths")
+```
+
+```{r}
+# plot tree
+plot.phylo(tree, main= "Aves (Palaeognathae) Phylogenetic Tree", 
+            use.edge.length = F)
+
+# add label
+mtext(text = "Rooted Tree - No branch Lengths")
+```
+
+
+```{r}
+# plot tree
+plot.phylo(tree, main="Aves (Palaeognathae) Phylogenetic Tree", 
+            use.edge.length = T)
+
+# add label
+mtext(text = "Rooted Tree - With Branch Lengths")
+```
+
+
 
 ## Haplotypes and Heatmaps
 

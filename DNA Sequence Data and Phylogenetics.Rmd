@@ -41,11 +41,11 @@ library (spider)
 ```
 ### Read in DNA Code
 ```{r}
-Rhea_dna <- read.dna("https://raw.githubusercontent.com/allyboville3/Collaborative-Data-Science-Project/main/Aves%20FASTA%20Files/Rhea_americana.fasta", format = "fasta")
+Ostrich_dna <- read.dna("https://raw.githubusercontent.com/allyboville3/Collaborative-Data-Science-Project/main/Aves%20FASTA%20Files/Struthio_camelus.fasta", format = "fasta")
 
 # This creates a specific structure called a DNAbin in {ape}. We can see this by checking the class.
 
-class (Rhea_dna)
+class (Ostrich_dna)
 ```
 
 ### Preliminary data/looking
@@ -53,12 +53,12 @@ class (Rhea_dna)
 Use {pegas} to gather some other information:
 This calculates the frequency of the four nucleotides in the FASTA file
 ```{r}
-base.freq(Rhea_dna)
+base.freq(Ostrich_dna)
 ```
 
 This calculates the GC content, which is useful in ancient DNA. 
 ```{r}
-GC.content(Rhea_dna)
+GC.content(Ostrich_dna)
 ```
 
 ## Trimming and Preparing Data

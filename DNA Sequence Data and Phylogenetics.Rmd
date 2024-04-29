@@ -97,6 +97,7 @@ SeqBin
 class(SeqBin)
 dnbin<-dist.dna(SeqBin, model = "K80") #computing distance by ape package with K80 model derived by Kimura (1980)
 tree<-nj(dnbin)
+
 ```
 
 Plot a phylogenetic tree using the `msaplot()` command from {ggtree} along with various aesthetics from {ggplot2}

@@ -1,0 +1,56 @@
+---
+title: "function"
+format: html
+---
+
+## just loading in
+```{r}
+library(ape)
+library (bioseq)
+library(ggplot2)
+library (seqinr)
+```
+
+Grabbing sample data
+```{r}
+Ostrich_dna <- read.dna("https://raw.githubusercontent.com/allyboville3/Collaborative-Data-Science-Project/main/Aves%20FASTA%20Files/Struthio_camelus.fasta", format = "fasta") #{ape}
+```
+
+Testing some codes: Summary
+```{r, eval=FALSE}
+labels.DNAbin(Ostrich_dna)
+base.freq(Ostrich_dna) #{ape}
+GC.content(Ostrich_dna) #{ape}
+length (Ostrich_dna) #base R
+image.DNAbin(Ostrich_dna) #ape
+trios <- as.data.frame(seqinr::count(Ostrich_dna, 3)) # {seqinr}
+ggplot(data=trios, aes(x=Var1, y=Freq, fill=Var1)) + geom_col() + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+```
+
+Creating a package of these codes
+
+```{r}
+DNAsummary <- function(x) {
+   df <- data.frame(
+  labels.DNAbin(Ostrich_dna),
+  base.freq(Ostrich_dna), #{ape}
+  GC.content(Ostrich_dna), #{ape}
+  length (Ostrich_dna))
+    print(df)
+  print(image.DNAbin(x))
+  trios <- as.data.frame(seqinr::count(x, 3)) # {seqinr}
+  ggplot(data=trios, aes(x=Var1, y=Freq, fill=Var1)) + geom_col() + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+}
+```
+
+##TESTING 
+```{r}
+DNAsummary(Ostrich_dna)
+```
+
+Aligning 
+```{r}
+# FullSeq <- read_fasta ("https://raw.githubusercontent.com/allyboville3/Collaborative-Data-Science-Project/main/All_Bird_Species.fasta") #{bioseq}
+# FullSeq <- tibble(label = names(FullSeq), sequence = FullSeq) #converts to tibble
+# FullSeq <- FullSeq %>%  mutate(genbank_id = str_extract(label, "([^\\s]+)"), taxa = str_extract(label, "(?<= ).*")) %>%  select(genbank_id, taxa, sequence) %>%      mutate(n_base = seq_nchar(sequence)) #creates label and base pair length
+```

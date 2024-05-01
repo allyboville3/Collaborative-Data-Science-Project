@@ -14,14 +14,15 @@ library (seqinr)
 Grabbing sample data
 ```{r}
 Ostrich_dna <- read.dna("https://raw.githubusercontent.com/allyboville3/Collaborative-Data-Science-Project/main/Aves%20FASTA%20Files/Struthio_camelus.fasta", format = "fasta") #{ape}
+MySeq <- read.dna("https://raw.githubusercontent.com/allyboville3/Collaborative-Data-Science-Project/main/Aves_cytB.fas", format="fasta")
 ```
 
 Testing some codes: Summary
 ```{r, eval=FALSE}
 labels.DNAbin(Ostrich_dna)
-base.freq(Ostrich_dna) #{ape}
-GC.content(Ostrich_dna) #{ape}
-length (Ostrich_dna) #base R
+base.freq(Ostrich_dna) #
+GC.content(Ostrich_dna) #
+length (Ostrich_dna) #
 image.DNAbin(Ostrich_dna) #ape
 trios <- as.data.frame(seqinr::count(Ostrich_dna, 3)) # {seqinr}
 ggplot(data=trios, aes(x=Var1, y=Freq, fill=Var1)) + geom_col() + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
@@ -31,22 +32,51 @@ Creating a package of these codes
 
 ```{r}
 DNAsummary <- function(x) {
-   df <- data.frame(
-  labels.DNAbin(Ostrich_dna),
-  base.freq(Ostrich_dna), #{ape}
-  GC.content(Ostrich_dna), #{ape}
-  length (Ostrich_dna))
-    print(df)
-  print(image.DNAbin(x))
-  trios <- as.data.frame(seqinr::count(x, 3)) # {seqinr}
-  ggplot(data=trios, aes(x=Var1, y=Freq, fill=Var1)) + geom_col() + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+   if (class(x)=="DNAbin")
+       {
+     df <- data.frame(
+    labels.DNAbin(Ostrich_dna),
+    base.freq(Ostrich_dna), #{ape}
+    GC.content(Ostrich_dna), #{ape}
+    length (Ostrich_dna))
+      print(df)
+    print(image.DNAbin(x))
+    trios <- as.data.frame(seqinr::count(x, 3)) # {seqinr}
+    ggplot(data=trios, aes(x=Var1, y=Freq, fill=Var1)) + geom_col() + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+   }
+  else {
+    print("Please use file in DNAbin format")
+  }
 }
 ```
+
 
 ##TESTING 
 ```{r}
 DNAsummary(Ostrich_dna)
+d <- c("AAATTCGTCAGA")
+DNAsummary(MySeq)
 ```
+
+
+# Write-up
+
+# Visualizing and basic glance at FAFSA files
+
+##Description
+`DNA.vis` creates a summary for a single fasta file that includes frequences of the four DNA bases, GC count, , length of sequences, and two visualizations (one showing a colored image of the base pairs and the second showing relative counts of different codons or sets of three base pairs.)
+
+Files must be in DNAbin format.
+FAFSA files with multiple individual genomes may be uploaded, but larger samples may take several minutes.
+
+## Usage
+```
+DNA.vis (x)
+```
+
+
+
+
 
 Aligning 
 ```{r}

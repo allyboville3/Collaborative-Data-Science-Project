@@ -180,20 +180,20 @@ After,
 ```{r}
 an<-as.alignment(d)  #converting DNAbin to alignment format
 nm<-as.matrix(an)       #converting alignment to matrix
-sat2 <- NULL
+bin2 <- NULL
 for (i in 1:nrow(nm)) {
-  sat2[i] <- paste(nm[i, ], collapse="")
+  bin2[i] <- paste(nm[i, ], collapse="")
 }
 
-sat2 <- toupper(sat2) #converts all letters to uppercase
-sat3 <- unique(sat2) #gives only unique sequences from all sequences
-sat3#that is, it gives complete sequences of haplotypes (20x373).
+bin2 <- toupper(bin2) #converts all letters to uppercase
+bin3 <- unique(bin2) #gives only unique sequences from all sequences
+bin3#that is, it gives complete sequences of haplotypes (20x373).
 hfreq <- NULL
-for (i in 1:length(sat3)) {
+for (i in 1:length(bin3)) {
   hcount = 0
-  s3 <- sat3[i]
-  for (j in 1:length(sat2)) {
-    s2 <- sat2[j]
+  s3 <- bin3[i]
+  for (j in 1:length(bin2)) {
+    s2 <- bin2[j]
     if (s3 == s2) {
       hcount <- (hcount + 1) #counts the number of individuals with the same haplotype sequence. 
       #print(paste(i, "yes", hcount))
@@ -205,14 +205,14 @@ for (i in 1:length(sat3)) {
   #print(paste(hname, hcount, collapse = ""))
 }   #haplotype frequency in the all samples
 
-len <- nchar(sat3[1]) #assume all have same length!!!
+len <- nchar(bin3[1]) #assume all have same length!!!
 cnt <- 1
-sat4 = list()
+bin4 = list()
 for (j in 1:len) {
   same <- TRUE
-  first <- substr(sat3[1], j, j)
-  for (i in 2:length(sat3)) {
-    ch1 <- substr(sat3[i], j, j)
+  first <- substr(bin3[1], j, j)
+  for (i in 2:length(bin3)) {
+    ch1 <- substr(bin3[i], j, j)
     if (first != ch1) {
       str <- paste(j, first, ch1)
       print(str)
@@ -222,23 +222,23 @@ for (j in 1:len) {
   }
   if (!same) {
     ss <- NULL
-    for (i in 1:length(sat3)) {
-      ss <- paste(ss, substr(sat3[i], j, j), sep="")
+    for (i in 1:length(bin3)) {
+      ss <- paste(ss, substr(bin3[i], j, j), sep="")
     }
-    sat4[cnt] <- ss
+    bin4[cnt] <- ss
     cnt <- cnt + 1
   }
 }#it gives the mutation points and the nucleotide substitutions
 
-len <- nchar(sat3[1]) #assume all have same length!!!
+len <- nchar(bin3[1]) #assume all have same length!!!
 cnt <- 1
-sat5 = list() 
+bin5 = list() 
 for (j in 1:len) { #scan all columnns and if all elements are the same do not copy
   same <- TRUE
-  first <- substr(sat3[1], j, j)
+  first <- substr(bin3[1], j, j)
   scol <- first
-  for (i in 2:length(sat3)) {
-    ch1 <- substr(sat3[i], j, j)
+  for (i in 2:length(bin3)) {
+    ch1 <- substr(bin3[i], j, j)
     scol <- paste(scol, ch1, sep="")
     if (first != ch1) {
       str <- paste(j, first, ch1)
@@ -250,18 +250,18 @@ for (j in 1:len) { #scan all columnns and if all elements are the same do not co
   if (!same) {
     scol <- paste("V_", cnt, " ", scol, sep="")
     ss <- NULL
-    for (i in 1:length(sat3)) {
-      ss <- paste(ss, substr(sat3[i], j, j), sep="")
+    for (i in 1:length(bin3)) {
+      ss <- paste(ss, substr(bin3[i], j, j), sep="")
     } 
-    sat5[cnt] <- ss
+    bin5[cnt] <- ss
     cnt <- cnt + 1
   }
 }
 
-sat6 <- as.matrix(sat5)
-mat6 = matrix(nrow=nrow(sat6), ncol=nchar(sat6[1]))
+bin6 <- as.matrix(bin5)
+mat6 = matrix(nrow=nrow(bin6), ncol=nchar(bin6[1]))
 for (i in 1:nrow(mat6)) {
-  s <- as.vector(strsplit(as.character(sat5[i]), ""))
+  s <- as.vector(strsplit(as.character(bin5[i]), ""))
   for (j in 1:ncol(mat6)) {
     mat6[i, j] <- as.character(s[[1]][j])
   }
@@ -297,18 +297,18 @@ write.table(cmstr4,file="cmstr4.txt", quote=FALSE, sep="\t")
 
 Create the heatmap!
 ```{r}
-sat2 <- NULL
+bin2 <- NULL
 for (i in 1:nrow(nm)) {
-  sat2[i] <- paste(nm[i, ], collapse="")
+  bin2[i] <- paste(nm[i, ], collapse="")
 }
 
-sat2 <- toupper(sat2)
-sat3 <- unique(sat2)
-comat = matrix(nrow=length(sat3), ncol=length(sat3))
-for (i in 1:length(sat3)) { 
-  si <- sat3[i]
-  for (j in 1:length(sat3)) { 
-    sj <- sat3[j]
+bin2 <- toupper(bin2)
+bin3 <- unique(bin2)
+comat = matrix(nrow=length(bin3), ncol=length(bin3))
+for (i in 1:length(bin3)) { 
+  si <- bin3[i]
+  for (j in 1:length(bin3)) { 
+    sj <- bin3[j]
     difcnt = 0
     s1 = as.vector(strsplit(as.character(si), ""))
     s2 = as.vector(strsplit(as.character(sj), ""))
@@ -327,79 +327,4 @@ rownames(comat)<-paste("H", 1:nrow(comat), sep = "")
 heatmap(comat,scale="none",col=heat.colors(100),keep.dendro=TRUE, symm=TRUE) #stats package
 
 comat
-```
-
-
-Haploytype network- individuals
-```{r}
-library(pegas)
-h<-pegas::haplotype(d, strict = FALSE, trailingGapsAsN = TRUE)#extracts haplotypes from DNAbin object
-hname<-paste("H", 1:nrow(h), sep = "")
-rownames(h)= paste(hname)
-net<-haploNet(h, d = NULL, getProb = TRUE)#constructs the haplotype network
-net
-ind.hap<-with(
-    utils::stack(setNames(attr(h, "index"), rownames(h))),
-    table(hap=ind, individuals=rownames(d))
-)
-
-par(mar=c(0.01,0.01,0.01,15))
-plot(net, size=attr(net, "freq"), scale.ratio = 2, cex = 0.6, labels=TRUE, pie = ind.hap, show.mutation=1, font=2, fast=TRUE)
-legend(x= 57,y=15, colnames(ind.hap), fill=rainbow(ncol(ind.hap)), cex=0.52, ncol=6, x.intersp=0.2, text.width=11)
-```
-
-```{r}
-h<-pegas::haplotype(d, strict = FALSE, trailingGapsAsN = TRUE)#extracts haplotypes from DNAbin object
-hname<-paste("H", 1:nrow(h), sep = "")
-rownames(h)= paste(hname)
-net<-haploNet(h, d = NULL, getProb = TRUE) #constructs the haplotype network
-net
-ind.hap<-with(
-    utils::stack(setNames(attr(h, "index"), rownames(h))),
-    table(hap=ind, individuals=rownames(d)[values])
-)
-
-#We followed the name order in the ind.hap object for all coloring of samples in the haplotype network circles.
-#You can see the order of sample names using the command "colnames(ind.hap)".
-#The color of the samples has been assigned as the "bg" list for use in the plot () command, as below.
-#The number of colors is determined by the number of samples in the same population (see "colnames (ind.hap)").
-#Using the colors() command, you can choose different colors for your samples according to the populations.
-
-bg<-c(rep("dodgerblue4", 15), rep("olivedrab4",15), rep("royalblue2", 15), rep("red",15), rep("olivedrab3",15), 
- rep("skyblue1", 15), rep("olivedrab1", 15),  rep("darkseagreen1", 15))
-
-#If you are not going to use a special order for the population names to be listed in the legend command (population names listed in the legend ("hapcol"), 
-#you can automatically select and sort the population names using the following command ("sn2"). 
-#This order is fully consistent with the order in the ind.hap object.
-
-#un2<-unique(n2)
-#sn2<-sort(un2)
-
-#Then you must the use "sn2" list instead of "hapcol" list in the legend argument.
-
-#But, we wanted to order names of the population names according to groups. 
-#Therefore, we reordered the population names as "hapcol" list.
-#So, you can see color transitions of the populations by the groups. 
-#The population names were assigned using "hapcol" list in the legend () command.
-
-hapcol<-c("Aksu", "Demre", "Kumluca", "Firm", "Bayatbadem", "Geyikbayir", "Phaselis", "Termessos")
-
-#At this point, the colors to be used in the list where the populations will be shown (legend) must match the colors you choose for the samples in the circles.
-#Therefore, if you used the "sn2" list, you can directly use the "bg" list for the populations' color symbols. 
-#Note, now the number of colors must be changed to "1" for each population.
-#For example;
-#bgp<-c(rep("dodgerblue4", 1), rep("olivedrab4",1),...)
-
-#Then you must the use "bgp" list instead of "ubg" list in the legend argument (fill).
-
-#But, we used different order for the population names (hapcol list).
-#Thus, colors of the population were assigned as "ubg" list and used in the fill argument of the legend () command.
-#The colors of the samples assigned in the bg list and the population colors (ubg) belonging samples must match each other.
-
-ubg<-c(rep("dodgerblue4",1), rep("royalblue2",1), rep("skyblue1",1), rep("red",1), rep("olivedrab4",1), 
-rep("olivedrab3",1), rep("olivedrab1",1), rep("darkseagreen1",1))
-
-par(mar=c(0.001,0.001,0.001,0.001))
-plot(net, size=attr(net, "freq"), bg = bg, scale.ratio = 2, cex = 0.7, labels=TRUE, pie = ind.hap, show.mutation=1, font=2, fast=TRUE)
-legend(x=-36,y=53, hapcol, fill=ubg, cex=0.8, ncol=1, bty="n", x.intersp = 0.2)
 ```

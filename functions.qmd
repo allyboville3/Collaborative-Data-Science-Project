@@ -31,7 +31,7 @@ ggplot(data=trios, aes(x=Var1, y=Freq, fill=Var1)) + geom_col() + theme(axis.tex
 Creating a package of these codes
 
 ```{r}
-DNAsummary <- function(x) {
+DNA.vis <- function(x) {
    if (class(x)=="DNAbin")
        {
      df <- data.frame(
@@ -53,9 +53,9 @@ DNAsummary <- function(x) {
 
 ##TESTING 
 ```{r}
-DNAsummary(Ostrich_dna)
+DNA.vis(Ostrich_dna)
 d <- c("AAATTCGTCAGA")
-DNAsummary(MySeq)
+DNA.vis(MySeq)
 ```
 
 
@@ -74,8 +74,18 @@ FAFSA files with multiple individual genomes may be uploaded, but larger samples
 DNA.vis (x)
 ```
 
+## Arguments
+x   a DNA bin file, created from a FASTA file.
 
+## Details
+The function packages together multiple functions from the packages {ape}, {seqinr}, and {ggplot}
 
+## Examples
+```
+#add this in when data is uploaded
+#DNA.vis(DATANAME)
+
+```
 
 
 Aligning 
